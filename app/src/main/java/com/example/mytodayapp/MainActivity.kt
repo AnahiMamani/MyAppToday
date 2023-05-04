@@ -15,6 +15,8 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -23,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.mytodayapp.model.Tarefa.Tarefa
 import com.example.mytodayapp.ui.theme.MyTodayAppTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -42,6 +45,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreenContet(drawerState: DrawerState) {
     val scaffoldState = rememberScaffoldState( drawerState = drawerState)
+    var scope = rememberCoroutineScope()
     //scaffold.- e uma tag onde vc vai rechear as partes visuais
     Scaffold(
         scaffoldState = scaffoldState,
@@ -51,7 +55,7 @@ fun MainScreenContet(drawerState: DrawerState) {
                     navigationIcon = {
                         IconButton(
                             onClick = {
-                                CoroutineScope(Dispatchers.Default).launch {
+                                scope.launch{
                                     scaffoldState.drawerState.open()
                                 }
                             }
@@ -88,17 +92,28 @@ fun MainScreenContet(drawerState: DrawerState) {
                     .fillMaxSize()
             ) {
                 MySearchField(modificador = Modifier.fillMaxWidth())
-                MyTaskWidget(
-                    modificador = Modifier.fillMaxWidth(),
-                    taskName = "Preparar aula LazyList/LazyColum",
-                    taskDetails = "É bem melhor usar lazlist ao inves de colum",
-                    deadEndDate = Date()
+
+                val tProvaDeCalculo = Tarefa(
+                    "Estudar prova calclo",
+                    "do Livro tal",
+                    Date(),
+                    Date(),
+                    status = 0.0
                 )
-                MyTaskWidget(
-                    modificador = Modifier.fillMaxWidth(),
-                    taskName = "Prova Matematica",
-                    taskDetails = "Estudar Calculo caplo 1 e 2",
-                    deadEndDate = Date())
+
+                val tProvaDeKotlin = Tarefa(
+                    "Estudar Proa de kotlin",
+                    "teste Livro",
+                    Date(),
+                    Date(),
+                    status= 0.0 ///CONSIDERANDO 0 por cento de 100 realizado
+                )
+
+                var MinhaListaDeTarefas= listOf<Tarefa>(tProvaDeCalculo,tProvaDeKotlin)
+
+                MyTasksWidgetList(MinhaListaDeTarefas);
+
+
             }
         },
         bottomBar = {
@@ -109,6 +124,12 @@ fun MainScreenContet(drawerState: DrawerState) {
     )
 }
 
+@Composable
+fun MyTasksWidgetList(ListaDeTarefas: List<Tarefa>){
+    //algo para o usuario roolar na tela
+    ListaDeTarefas.forEach(action = {Log.i("###33333333333333######","${it.nome}")})
+
+}
 @Composable
 fun MySearchField(modificador: Modifier){
     TextField(
@@ -127,9 +148,8 @@ fun MySearchField(modificador: Modifier){
 @Composable
 fun MyTaskWidget(
         modificador: Modifier,
-        taskName: String,
-        taskDetails: String,
-        deadEndDate: Date
+        tarefaASerMostrada: Tarefa
+
 ){
     val dateFormatter = SimpleDateFormat("EEE,MMM DD, yyyy", Locale.getDefault())
     Row(modifier = modificador) {
