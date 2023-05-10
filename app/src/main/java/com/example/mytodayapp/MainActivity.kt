@@ -10,11 +10,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -46,6 +44,7 @@ class MainActivity : ComponentActivity() {
 fun MainScreenContet(drawerState: DrawerState) {
     val scaffoldState = rememberScaffoldState( drawerState = drawerState)
     var scope = rememberCoroutineScope()
+    //var tabIndex = by remember{ mutableStateOf(0) }
     //scaffold.- e uma tag onde vc vai rechear as partes visuais
     Scaffold(
         scaffoldState = scaffoldState,
@@ -67,20 +66,46 @@ fun MainScreenContet(drawerState: DrawerState) {
                     }
                 )
         },
-        drawerBackgroundColor = Color.Red,
+        drawerBackgroundColor = Color.LightGray,
         drawerGesturesEnabled = drawerState.isOpen,
         drawerContent = {
                Box(
                    modifier = Modifier
-                       .background(Color.Magenta)
-                       .height(16.dp)
+                       .background(Color.Blue).fillMaxWidth()
+                       .padding(vertical = 30.dp, horizontal = 30.dp)
                ){
-                   Text(text = "Opções!!")
+                   Text(text = "Opções!!",
+                       fontSize = 30.sp,
+                       fontWeight = FontWeight.Bold,
+                       fontStyle = FontStyle.Italic,
+                        color = Color.White
+                   )
                }
-            Column() {
-                Text(text = "Opçoes de menu 1")
-                Text(text = "Opçoes de menu 1")
-                Text(text = "Opçoes de menu 1")
+            Column(modifier = Modifier.padding(20.dp)) {
+                Text(
+                    text = "Opçoes de menu 1",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontStyle = FontStyle.Italic
+                )
+                Text(
+                    text = "Opçoes de menu 1",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontStyle = FontStyle.Italic
+                )
+                Text(
+                    text = "Opçoes de menu 1",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontStyle = FontStyle.Italic
+                )
+                Text(
+                    text = "Opçoes de menu 1",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontStyle = FontStyle.Italic
+                )
             }
         },
         content = {
@@ -88,13 +113,13 @@ fun MainScreenContet(drawerState: DrawerState) {
             Column(
                 //modifier =Modifier e tipo apontar o lugar varias vezes para nao errar, na assinatura do codigo tem uma ordem que deve ser seguida caso nao declarada.
                 modifier = Modifier
-                    .background(Color.Yellow)
+                    .background(Color.Gray)
                     .fillMaxSize()
             ) {
                 MySearchField(modificador = Modifier.fillMaxWidth())
 
                 val tProvaDeCalculo = Tarefa(
-                    "Estudar prova calclo",
+                    "Estudar prova calculo",
                     "do Livro tal",
                     Date(),
                     Date(),
@@ -102,7 +127,7 @@ fun MainScreenContet(drawerState: DrawerState) {
                 )
 
                 val tProvaDeKotlin = Tarefa(
-                    "Estudar Proa de kotlin",
+                    "Estudar Prova de kotlin",
                     "teste Livro",
                     Date(),
                     Date(),
@@ -120,14 +145,24 @@ fun MainScreenContet(drawerState: DrawerState) {
             BottomAppBar(
                 content = { Text("asdf")}
             )
-        }
+        },
+        isFloatingActionButtonDocked = false,
+        floatingActionButton = { ExtendedFloatingActionButton(
+            icon = {
+                   Icon(imageVector = Icons.Default.AddCircle,
+                       contentDescription = "Add Task")
+            },
+            text = { Text(text = "ADD")},
+            onClick = { /*TODO*/ })}
     )
 }
 
 @Composable
 fun MyTasksWidgetList(ListaDeTarefas: List<Tarefa>){
     //algo para o usuario roolar na tela
-    ListaDeTarefas.forEach(action = {Log.i("###33333333333333######","${it.nome}")})
+    ListaDeTarefas.forEach(
+        action = { MyTaskWidget(modificador = Modifier.fillMaxWidth().padding(7.dp), tarefaASerMostrada = it)}
+    )
 
 }
 @Composable
@@ -152,14 +187,19 @@ fun MyTaskWidget(
 
 ){
     val dateFormatter = SimpleDateFormat("EEE,MMM DD, yyyy", Locale.getDefault())
-    Row(modifier = modificador) {
+    Row(
+        modifier = modificador.border(width = 2.dp, color = Color.Yellow).background(color = Color.White)
+    ) {
         Column() {
             Icon(
                 imageVector = Icons.Default.Notifications,
-                contentDescription = "Icons of a pendent task"
+                contentDescription = "Icons of a pendent task",
+                modifier = Modifier.padding(horizontal = 30.dp, vertical = 1.dp).size(30.dp),
+                tint = Color.Yellow
             )
             Text(
-                text = dateFormatter.format(deadEndDate),
+                modifier = Modifier.padding(10.dp),
+                text = dateFormatter.format(tarefaASerMostrada.pzoFinal),
                 fontWeight = FontWeight.Bold,
                 fontStyle = FontStyle.Italic,
                 fontSize = 12.sp
@@ -167,18 +207,18 @@ fun MyTaskWidget(
         }
         Column(
             modifier = modificador
-                .border(width = 1.dp, color = Color.Black)
-                .padding(3.dp)
+                .border(width = 5.dp, color = Color.Yellow)
+                .padding(15.dp)
         ){
             Text(
-                text = taskName,
-                fontSize = 20.sp,
+                text = tarefaASerMostrada.nome,
+                fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 fontStyle = FontStyle.Italic
             )
             Text(
-                text = taskName,
-                fontSize = 10.sp,
+                text = tarefaASerMostrada.details.toString(),
+                fontSize = 13.sp,
                 fontWeight = FontWeight.Normal,
                 fontStyle = FontStyle.Normal
             )
